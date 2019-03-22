@@ -1,0 +1,40 @@
+version: '3'
+services: 
+
+
+  ### Mysql container #########################################
+
+  mysql-master:
+      image: mysql:5.7.24
+      ports:
+        - "5506:3306"
+      volumes:
+        - ./mysql/data-master:/var/lib/mysql:rw
+        - ./mysql-master.cnf:/etc/mysql/conf.d/mysql-master.cnf:ro
+        - ./mysql/log-master:/var/log/mysql:rw
+      restart: always
+      privileged: true
+      environment:
+        MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      networks:
+        - net-mysql
+
+  mysql-slave:
+    image: mysql:5.7.24
+    ports:
+      - "5507:3306"
+    volumes:
+      - ./mysql/data-slave:/var/lib/mysql:rw
+      - ./mysql-slave.cnf:/etc/mysql/conf.d/mysql-slave.cnf:ro
+      - ./mysql/log-slave:/var/log/mysql:rw
+    restart: always
+    privileged: true
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+        - net-mysql
+
+networks:
+  net-php:
+  net-mysql:
+  net-redis:
